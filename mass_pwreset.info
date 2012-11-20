@@ -23,7 +23,7 @@ core = 7.x
 ; dependencies[] = module_name (1.x)
 
 ; Configuration page
-; configure = admin/config/content/mass_pwreset
+configure = admin/people/mass-pwreset
 
 ; For further information about configuration options, see
 ; - http://drupal.org/node/542202
