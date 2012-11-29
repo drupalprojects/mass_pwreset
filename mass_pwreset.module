@@ -87,7 +87,7 @@ function _mass_pwreset_generate_password($length = 8, $admin = FALSE) {
   $allowable_characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ0123456789()`~!@#$%^&*-+=|\{}[]:;"\'<>,.?/';
 
   // Zero-based count of characters in the allowable list.
-  $len = strlen($allowable_characters) - 1;
+  $len = drupal_strlen($allowable_characters) - 1;
 
   // Declare the password as a blank string.
   $pass = '';
