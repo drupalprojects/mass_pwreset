@@ -2,9 +2,14 @@
 
 /**
  * @file
- * mass_pwreset.admin.unc
- *
  * Admin page callbacks for the mass_pwreset module.
+ */
+
+/**
+ * Form constructor for the mass password reset form.
+ *
+ * @see mass_pwreset_submit()
+ * @ingroup forms
  */
 function mass_pwreset_form($form, $form_state) {
   $form['options'] = array(
@@ -14,7 +19,7 @@ function mass_pwreset_form($form, $form_state) {
   $form['options']['notify_users'] = array(
     '#type' => 'checkbox',
     '#title' => t('Notify users of password reset via email'),
-    '#description' => t('Notify users of password reset with Drupal\'s password recovery email.'),
+    '#description' => t("Notify users of password reset with Drupal's password recovery email."),
     '#default_value' => 0,
   );
   $form['options']['include_admin_user'] = array(
@@ -33,8 +38,9 @@ function mass_pwreset_form($form, $form_state) {
 }
 
 /**
- * Reset paswords and notify users
+ * Form submission handler for mass_pwreset_form().
  *
+ * Reset paswords and notify users.
  */
 function mass_pwreset_submit($form, &$form_state) {
   // Load up the users!

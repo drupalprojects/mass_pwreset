@@ -34,19 +34,22 @@ function mass_pwreset_menu() {
 }
 
 /**
- * _mass_pwreset_generate_password
- *   Modified version of Drupal's user_password() for generating passwords
- *   which will never be sent to anyone. The default length of the password has
- *   been changed to 12 characters to increse entropy. Includes two sets of
- *   password requirements (standard and admin).
- * @param  integer $length
+ * Generate user passwords.
+ *
+ * Modified version of Drupal's user_password() for generating passwords which
+ * will never be sent to anyone. The default length of the password has been
+ * changed to 12 characters to increse entropy. Includes two sets of password
+ * requirements (standard and admin).
+ *
+ * @param int $length
  *   Length to generate the password
- * @param  bool $admin
+ * @param bool $admin
  *   (optional) TRUE if password should be generated from more stringent
  *   password requirements. Defaults to FALSE. Mimimum password length shifts
  *   to 20 if TRUE, regardless of the password length passed into $length.
- * @return string $pass
- *         Generated password
+ *
+ * @return string
+ *   Generated password
  */
 function _mass_pwreset_generate_password($length = 8, $admin = FALSE) {
   // Set password requirements for standard or admin based on $admin value.
@@ -57,13 +60,13 @@ function _mass_pwreset_generate_password($length = 8, $admin = FALSE) {
     }
 
     // This veriable contains the regex to enforce the following password requirements:
-    // First and last characters cannot be digits (0-9)
-    // Must contain two digit characters (0-9)
-    // Must contain one lower case character (a-z)
-    // Must contain one upper case character (A-Z)
-    // Must contain three special characters - ()`~!@#$%^&*-+=|\{}[]:;"'<>,.?/
-    // Minimum length is 12 characters
-    // Maximum length is 128 characters
+    // First and last characters cannot be digits (0-9).
+    // Must contain two digit characters (0-9).
+    // Must contain one lower case character (a-z).
+    // Must contain one upper case character (A-Z).
+    // Must contain three special characters ( ()`~!@#$%^&*-+=|\{}[]:;"'<>,.?/ ).
+    // Minimum length is 12 characters.
+    // Maximum length is 128 characters.
     $pass_requirements = '_^(?=.*\d.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[()`~!@#$%^\&*\-+=\|\\{}[\]:;"\'<>,.?/].*[()`~!@#$%^\&*\-+=\|\\{}[\]:;"\'<>,.?/].*[()`~!@#$%^\&*\-+=\|\\{}[\]:;"\'<>,.?/])[\D]{1}[\s0-9a-zA-Z()`~!@#$%^\&*\-+=\|\\{}[\]:;"\'<>,.?/]{10,126}[\D]{1}$_';
   }
   else {
@@ -73,13 +76,13 @@ function _mass_pwreset_generate_password($length = 8, $admin = FALSE) {
     }
 
     // This veriable contains the regex to enforce the following password requirements:
-    // First and last characters cannot be digits (0-9)
-    // Must contain one digit character (0-9)
-    // Must contain one lower case character (a-z)
-    // Must contain one upper case character (A-Z)
-    // Must contain one special character - ()`~!@#$%^&*-+=|\{}[]:;"'<>,.?/
-    // Minimum length is 8 characters
-    // Maximum length is 128 characters
+    // First and last characters cannot be digits (0-9).
+    // Must contain one digit character (0-9).
+    // Must contain one lower case character (a-z).
+    // Must contain one upper case character (A-Z).
+    // Must contain one special character ( ()`~!@#$%^&*-+=|\{}[]:;"'<>,.?/ ).
+    // Minimum length is 8 characters.
+    // Maximum length is 128 characters.
     $pass_requirements = '_^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[()`~!@#$%^\&*\-+=\|\\{}[\]:;"\'<>,.?/])[\D]{1}[\s0-9a-zA-Z()`~!@#$%^\&*\-+=\|\\{}[\]:;"\'<>,.?/]{6,126}[\D]{1}$_';
   }
 
