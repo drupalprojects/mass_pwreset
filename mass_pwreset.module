@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Reset all user accounts!
+ * Reset user passwords and optionally notify users.
  */
 
 /**
