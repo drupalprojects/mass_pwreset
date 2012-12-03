@@ -59,12 +59,14 @@ function _mass_pwreset_generate_password($length = 8, $admin = FALSE) {
       $length = 12;
     }
 
-    // This veriable contains the regex to enforce the following password requirements:
+    // This veriable contains the regex to enforce the following password
+    // requirements:
     // First and last characters cannot be digits (0-9).
     // Must contain two digit characters (0-9).
     // Must contain one lower case character (a-z).
     // Must contain one upper case character (A-Z).
-    // Must contain three special characters ( ()`~!@#$%^&*-+=|\{}[]:;"'<>,.?/ ).
+    // Must contain three special characters
+    // ( ()`~!@#$%^&*-+=|\{}[]:;"'<>,.?/ ).
     // Minimum length is 12 characters.
     // Maximum length is 128 characters.
     $pass_requirements = '_^(?=.*\d.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[()`~!@#$%^\&*\-+=\|\\{}[\]:;"\'<>,.?/].*[()`~!@#$%^\&*\-+=\|\\{}[\]:;"\'<>,.?/].*[()`~!@#$%^\&*\-+=\|\\{}[\]:;"\'<>,.?/])[\D]{1}[\s0-9a-zA-Z()`~!@#$%^\&*\-+=\|\\{}[\]:;"\'<>,.?/]{10,126}[\D]{1}$_';
@@ -75,12 +77,14 @@ function _mass_pwreset_generate_password($length = 8, $admin = FALSE) {
       $length = 8;
     }
 
-    // This veriable contains the regex to enforce the following password requirements:
+    // This veriable contains the regex to enforce the following password
+    // requirements:
     // First and last characters cannot be digits (0-9).
     // Must contain one digit character (0-9).
     // Must contain one lower case character (a-z).
     // Must contain one upper case character (A-Z).
-    // Must contain one special character ( ()`~!@#$%^&*-+=|\{}[]:;"'<>,.?/ ).
+    // Must contain one special character
+    // ( ()`~!@#$%^&*-+=|\{}[]:;"'<>,.?/ ).
     // Minimum length is 8 characters.
     // Maximum length is 128 characters.
     $pass_requirements = '_^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[()`~!@#$%^\&*\-+=\|\\{}[\]:;"\'<>,.?/])[\D]{1}[\s0-9a-zA-Z()`~!@#$%^\&*\-+=\|\\{}[\]:;"\'<>,.?/]{6,126}[\D]{1}$_';
