@@ -3,4 +3,4 @@ description = Reset all user accounts!
 core = 7.x
 
 ; Configuration page
-configure = admin/people/mass-pwrese
+configure = admin/people/mass-pwreset
