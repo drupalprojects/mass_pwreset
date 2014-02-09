@@ -16,6 +16,12 @@ function mass_pwreset_form($form, $form_state) {
     '#type' => 'fieldset',
     '#title' => t('Options'),
   );
+	$form['options']['choose_roles'] = array(
+		'#type' => 'checkboxes',
+		'#title' => t('Choose for what role'),
+		'#options' => user_roles(TRUE),
+		'#required' => TRUE
+	);
   $form['options']['notify_users'] = array(
     '#type' => 'checkbox',
     '#title' => t('Notify users of password reset via email'),
@@ -43,32 +49,20 @@ function mass_pwreset_form($form, $form_state) {
  * Reset paswords and notify users.
  */
 function mass_pwreset_submit($form, &$form_state) {
-  // Load up the users!
-  $users = entity_load('user');
+	$roles = array_filter($form_state['values']['choose_roles']);
+	$uids = mass_pwreset_get_uids_by_role($roles);
+	
+	if ($form_state['values']['include_admin_user'] != '1') {
+		unset($uids[1]);
+	}  
+	
+	$uids = array_values($uids);
+	
+	$data = array(
+		'uids' => $uids,
+		'notify_users' => $form_state['values']['notify_users'],
+	);
 
-  // Loop through each user and process password resets and email users.
-  foreach ($users as $user) {
-    // Process uid1 if user requested.
-    if ($user->uid == '1' && $form_state['values']['include_admin_user'] == '1') {
-      $new_pass = _mass_pwreset_generate_password(12, TRUE);
-      user_save($user, array('pass' => $new_pass));
-      drupal_set_message(t('UID1 password reset.'), 'status');
-      if ($form_state['values']['notify_users'] == '1') {
-        _user_mail_notify('password_reset', $user);
-        drupal_set_message(t('UID1 user notified via email.'), 'status');
-      }
-    }
-    // Process standard users and exclude uid0
-    elseif ($user->uid !== '0' && $user->uid !== '1') {
-      $new_pass = _mass_pwreset_generate_password(12, TRUE);
-      user_save($user, array('pass' => $new_pass));
-      drupal_set_message(t('Users passwords reset.'), 'status');
-      if ($form_state['values']['notify_users'] == '1') {
-        _user_mail_notify('password_reset', $user);
-        drupal_set_message(t('Users notified via email.'), 'status');
-      }
-    }
-
-  }
+	mass_pwreset_multiple_reset($data);
 
 }

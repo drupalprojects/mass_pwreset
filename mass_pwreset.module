@@ -114,3 +114,37 @@ function _mass_pwreset_generate_password($length = 8, $admin = FALSE) {
 
   return $pass;
 }
+
+/**
+ * Batch function: Multiple reset
+ */
+function mass_pwreset_multiple_reset($data) {
+	$batch = array(
+		'operations' => array(
+						array('mass_pwreset_batch_process', array($data)),
+		),
+		'finished' => 'mass_pwreset_batch_finished',
+		'title' => t('Multiple password reset'),
+		'init_message' => t('Multiple password reset in progress.'),
+		'progress_message' => t('Executed @current of @total.'),
+		'error_message' => t('The Multiple password reset have encountered an error'),
+		'file' => drupal_get_path('module', 'mass_pwreset') . '/mass_pwreset.batch.inc',
+	);
+
+	batch_set($batch);
+}
+
+/**
+ * Handler: retrieve uids from a list of roles
+ */
+function mass_pwreset_get_uids_by_role($roles = array()) {
+	$query = db_select('users', 'u');
+	$query->innerJoin('users_roles', 'ur', 'u.uid = ur.uid');
+	$query->fields('u', array('uid', 'uid'));
+ 	$query->condition('ur.rid', $roles, 'IN');
+	$query->orderBy('u.uid');
+	
+	$result = $query->execute()->fetchAllKeyed();
+	return $result;
+}
+
