@@ -1,0 +1,7 @@
+mass_pwreset.admin:
+  path: '/admin/people/nass-pwreset'
+  defaults:
+    _controller: 'TODO'
+    _title: 'Mass Password Reset'
+  requirements:
+    _permission: 'administer users'
