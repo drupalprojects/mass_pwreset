@@ -1,7 +1,7 @@
 mass_pwreset.admin:
   path: '/admin/people/mass-pwreset'
   defaults:
-    _controller: 'TODO'
+    _form: '\Drupal\mass_pwreset\Form\MassPasswordResetForm'
     _title: 'Mass Password Reset'
   requirements:
     _permission: 'administer users'
