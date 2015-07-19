@@ -1,17 +1,18 @@
 <?php
-
 /**
  * @file
  * Reset user passwords and optionally notify users.
  */
 
+use Drupal\Core\Routing\RouteMatchInterface;
+
 /**
  * Implements hook_help().
  */
-function mass_pwreset_help($path, $arg) {
-  switch ($path) {
-    case 'admin/people/mass-pwreset':
-      return '<p><strong>' . t('Use this form with caution.') . '</strong></p>' . '<p>' . t('This form will reset the passwords of all users except the administrative superuser id 1. You can optionally reset the administrative superuser id 1. Once passwords have been reset, users will optionally receive emails using the Drupal password recovery email. The password recovery email content can be edited at the <a href="@url">account settings configuration page</a>.', array('@url' => url("admin/config/people/accounts"))) . '</p>';
+function mass_pwreset_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'mass_pwreset.admin':
+      return '<p><strong>' . t('Use this form with caution.') . '</strong></p><p>' . t('This form will reset the passwords of all users except the administrative superuser id 1. You can optionally reset the administrative superuser id 1.') . '</p><p>' . t('Once passwords have been reset, users will optionally receive emails using the Drupal password recovery email.') . '</p>';
   }
 }
 
@@ -42,7 +43,7 @@ function mass_pwreset_menu() {
  * requirements (standard and admin).
  *
  * @param int $length
- *   Length to generate the password
+ *   Length to generate the password.
  * @param bool $admin
  *   (optional) TRUE if password should be generated from more stringent
  *   password requirements. Defaults to FALSE. Mimimum password length shifts
