@@ -17,24 +17,6 @@ function mass_pwreset_help($route_name, RouteMatchInterface $route_match) {
 }
 
 /**
- * Implements hook_menu().
- */
-function mass_pwreset_menu() {
-  $items['admin/people/mass-pwreset'] = array(
-    'title' => 'Mass Password Reset',
-    'description' => 'Perform mass password reset functions.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('mass_pwreset_form'),
-    'access arguments' => array('administer users'),
-    'type' => MENU_LOCAL_TASK,
-    'file' => 'mass_pwreset.admin.inc',
-    'weight' => 10,
-  );
-
-  return $items;
-}
-
-/**
  * Generate user passwords.
  *
  * Modified version of Drupal's user_password() for generating passwords which
