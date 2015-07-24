@@ -25,6 +25,7 @@ class MassPasswordResetForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+
     $form['options'] = array(
       '#type' => 'details',
       '#title' => t('Options'),
@@ -33,7 +34,7 @@ class MassPasswordResetForm extends FormBase {
     $form['options']['choose_roles'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Choose for what role'),
-      '#options' => array('Temporary', 'Options'),
+      '#options' => user_role_names(),
       '#required' => TRUE,
     );
     $form['options']['notify_users'] = array(
@@ -55,6 +56,7 @@ class MassPasswordResetForm extends FormBase {
 
     return $form;
   }
+
   /**
    * {@inheritdoc}
    */
