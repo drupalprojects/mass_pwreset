@@ -31,11 +31,12 @@ class MassPasswordResetForm extends FormBase {
     $form['options'] = array(
       '#type' => 'details',
       '#title' => t('Options'),
+      '#description' => t('Selecting Authenticated user will reset all authenticated roles.'),
       '#open' => TRUE,
     );
     $form['options']['choose_roles'] = array(
       '#type' => 'checkboxes',
-      '#title' => t('Choose for what role'),
+      '#title' => t('Choose Roles to Reset'),
       '#options' => user_role_names(),
       '#required' => TRUE,
     );
@@ -50,6 +51,11 @@ class MassPasswordResetForm extends FormBase {
       '#title' => t('Include admin user (uid1)'),
       '#description' => t('Include the administrative superuser id 1 account in the list of passwords being reset.'),
       '#default_value' => 0,
+      '#states' => array(
+        'visible' => array(
+          ':input[name="choose_roles[administrator]"]' => array('checked' => TRUE),
+        ),
+      ),
     );
     $form['reset_passwords'] = array(
       '#type' => 'submit',
