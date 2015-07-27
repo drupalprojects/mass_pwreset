@@ -8,6 +8,8 @@ namespace Drupal\mass_pwreset\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\mass_pwreset\Batch;
+use Drupal\mass_pwreset\MassPasswordReset;
 
 /**
  * Mass Password Reset Form.
@@ -61,7 +63,27 @@ class MassPasswordResetForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    drupal_set_message('The form was submitted.');
+
+    foreach ($form_state->getValue(['choose_roles']) as $r) {
+      if (!empty($r)) {
+        $roles[] = $r;
+      }
+    }
+    $uids = MassPasswordReset::getUidsByRole($roles);
+
+    if ($form_state->getValue(['include_admin_user']) != '1') {
+      unset($uids[1]);
+    }
+
+    $uids = array_values($uids);
+
+    $data = array(
+      'uids' => $uids,
+      'notify_users' => $form_state->values(['notify_users']),
+    );
+
+    $batch = new BatchPasswordReset($data);
+
   }
 
 }
