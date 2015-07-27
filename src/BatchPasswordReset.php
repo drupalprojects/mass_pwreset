@@ -19,14 +19,14 @@ class BatchPasswordReset {
   public function __construct($data) {
     $batch = array(
       'operations' => array(
-        array('mass_pwreset_batch_process', array($data)),
+        array($this->batchProcess, array($data)),
       ),
-      'finished' => 'mass_pwreset_batch_finished',
+      'finished' => $this->finishedBatch,
       'title' => t('Multiple password reset'),
       'init_message' => t('Multiple password reset in progress.'),
       'progress_message' => t('Executed @current of @total.'),
       'error_message' => t('The Multiple password reset have encountered an error'),
-      'file' => drupal_get_path('module', 'mass_pwreset') . '/mass_pwreset.batch.inc',
+      'file' => drupal_get_path('module', 'mass_pwreset') . 'src/BatchPasswordReset.php',
     );
 
     batch_set($batch);
