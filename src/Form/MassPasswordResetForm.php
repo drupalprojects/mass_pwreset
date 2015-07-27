@@ -40,12 +40,6 @@ class MassPasswordResetForm extends FormBase {
       '#options' => user_role_names(),
       '#required' => TRUE,
     );
-    $form['options']['notify_users'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Notify users of password reset via email'),
-      '#description' => t("Notify users of password reset with Drupal's password recovery email."),
-      '#default_value' => 0,
-    );
     $form['options']['include_admin_user'] = array(
       '#type' => 'checkbox',
       '#title' => t('Include admin user (uid1)'),
@@ -57,6 +51,29 @@ class MassPasswordResetForm extends FormBase {
         ),
       ),
     );
+    $form['notify'] = array(
+      '#type' => 'details',
+      '#title' => t('Notify Users'),
+      '#open' => TRUE,
+    );
+    $form['notify']['notify_users'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Notify users of password reset via email'),
+      '#description' => t("Notify users of password reset with Drupal's password recovery email."),
+      '#default_value' => 0,
+    );
+    $form['notify']['notify_blocked_users'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Notify blocked users of password reset via email'),
+      '#description' => t("Notify users that are blocked from the site."),
+      '#default_value' => 0,
+      '#states' => array(
+        'visible' => array(
+          ':input[name="notify_users"]' => array('checked' => TRUE),
+        ),
+      ),
+    );
+
     $form['reset_passwords'] = array(
       '#type' => 'submit',
       '#value' => t('Reset Passwords'),
