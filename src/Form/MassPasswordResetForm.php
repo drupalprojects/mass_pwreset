@@ -142,11 +142,9 @@ class MassPasswordResetForm extends FormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     // User must select roles for mass password reset.
-    if ($form_state->getValue('form_id') == 'mass_pwreset_form') {
-      // @todo finish validation, check selected roles
-      if ($form_state->getValue('authenticated_role') != 'TODO') {
-        $form_state->setErrorByName('authenticated_role', $this->t('Please select all users or specific roles'));
-      }
+    $selected_roles_count = count(array_filter($form_state->getValue('selected_roles')));
+    if ($form_state->getValue('authenticated_role') == 0 && $selected_roles_count == 0) {
+      $form_state->setErrorByName('authenticated_role', $this->t('Please select all users or select specific roles'));
     }
   }
 
