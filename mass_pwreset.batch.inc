@@ -31,7 +31,7 @@ function mass_pwreset_batch_process($data, &$context) {
 
     // Update status message.
     $context['message'] = t('Processing uid: @uid', array('@uid' => $user->id()));
-    $context['results'][] = t('User password reset');
+    $context['results']['passwords_reset'][] = t('User password reset');
 
     // Send password reset email and log event.
     if ($data['notify_active_users'] == 1) {
@@ -64,6 +64,8 @@ function mass_pwreset_batch_process($data, &$context) {
   if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
   }
+  // Save roles in results for finished logging.
+  $context['results']['roles'] = $data['list_of_roles'];
 }
 
 /**
@@ -73,12 +75,19 @@ function mass_pwreset_batch_process($data, &$context) {
  */
 function mass_pwreset_batch_finished($success, $results, $operations) {
   if ($success) {
-    $passwords_reset = count($results);
-    $message = t('Mass password reset batch finished resetting @count passwords.', array('@count' => $passwords_reset));
-    // Log password reset batch finished.
-    \Drupal::logger('mass_pwreset')->notice($message);
+    $passwords_reset = count($results['passwords_reset']);
+
     // Display message to user.
+    $message = t('Mass password reset batch finished resetting @count passwords.', array('@count' => $passwords_reset));
     drupal_set_message($message);
+
+    // Log password reset batch finished.
+    $log_message = t('Mass password reset finished. @count passwords reset with roles: @roles',
+      array(
+        '@count' => $passwords_reset,
+        '@roles' => $results['roles'],
+      ));
+    \Drupal::logger('mass_pwreset')->notice($log_message);
   }
   else {
     // Log password reset batch failure.

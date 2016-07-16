@@ -111,11 +111,13 @@ class MassPasswordResetForm extends FormBase {
     if ($form_state->getValue('authenticated_role') == 1) {
       // Get all user IDs, excluding uid 1.
       $uids = mass_pwreset_get_uids();
+      $list_of_roles = 'authenticated role';
     }
     else {
       // Get user IDs from selected roles.
       $roles = $form_state->getValue('selected_roles');
       $uids = mass_pwreset_get_uids_by_selected_roles(array_filter($roles));
+      $list_of_roles = implode(', ', array_filter($roles));
     }
 
     if (!isset($uids)) {
@@ -132,6 +134,7 @@ class MassPasswordResetForm extends FormBase {
       'uids' => $uids,
       'notify_active_users' => $form_state->getValue('notify_active_users'),
       'notify_blocked_users' => $form_state->getValue('notify_blocked_users'),
+      'list_of_roles' => $list_of_roles,
     );
     // Initiate the batch process.
     mass_pwreset_multiple_reset($batch_data);
