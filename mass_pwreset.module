@@ -8,17 +8,6 @@
 use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
- * Implements hook_help().
- */
-//@todo fix route_match
-function mass_pwreset_help($route_name, RouteMatchInterface $route_match) {
-  switch ($route_name) {
-    case 'mass_pwreset.admin':
-      return '<p><strong>' . t('Use this form with caution.') . '</strong></p><p>' . t('This form will reset the passwords of all users except the administrative superuser id 1. You can optionally reset the administrative superuser id 1.') . '</p><p>' . t('Once passwords have been reset, users will optionally receive emails using the Drupal password recovery email.') . '</p>';
-  }
-}
-
-/**
  * Establish batch operation for resetting passwords.
  */
 function mass_pwreset_multiple_reset($data) {
@@ -75,6 +64,61 @@ function mass_pwreset_get_custom_roles() {
 }
 
 /**
+ * Implements hook_help().
+ */
+function mass_pwreset_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.mass_pwreset':
+      $render['about'] = [
+        '#markup' => t('About'),
+        '#prefix' => '<h3>',
+        '#suffix' => '</h3>',
+      ];
+      $render['about_content'] = [
+        '#markup' => t('This module will reset passwords for specific roles selected. The administrator account (uid 1) can optionally be reset as well.'),
+        '#prefix' => '<p>',
+        '#suffix' => '</p>',
+        'more' => [
+          '#markup' => t("There is an option to notify the affected users by using Drupal's password recovery email process."),
+          '#prefix' => '<p>',
+          '#suffix' => '</p>',
+        ],
+      ];
+      $render['usage'] = [
+        '#markup' => t('Usage'),
+        '#prefix' => '<h3>',
+        '#suffix' => '</h3>',
+      ];
+      $render['usage_content'] = [
+        '#markup' => t('The password reset form is in a tab in the <b>admin people</b> section. Located at <a href="@link">/admin/people/mass-pwreset</a>', array('@link' => '/admin/people/mass-pwreset')),
+        '#prefix' => '<p>',
+        '#suffix' => '</p>',
+        'list' => [
+          '#theme' => 'item_list',
+          '#title' => t('Password Reset Options'),
+          '#items' => [
+            'Select either all users (authenicated role) or select specific roles for the users you want to reset',
+            'Select to notify active and blocked user accounts using the Drupal password recovery email system',
+            'To reset the administrator account (uid 1) you must also select include admin user',
+            'Start the process by clicking the "Reset Passwords" button',
+          ],
+        ],
+      ];
+      $render['logging'] = [
+        '#markup' => t('Logging'),
+        '#prefix' => '<h3>',
+        '#suffix' => '</h3>',
+      ];
+      $render['logging_content'] = [
+        '#markup' => t('The user accounts will be updated in a batch session. The uid will be logged for each user and the finished batch will be logged as well.'),
+        '#prefix' => '<p>',
+        '#suffix' => '</p>',
+      ];
+      return $render;
+  }
+}
+
+/**
  * Generate user passwords.
  *
  * Modified version of Drupal's user_password() to include special characters.
@@ -102,7 +146,7 @@ function _mass_pwreset_generate_password($password_length = 20) {
   $allowable_characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ0123456789()`~!@#$%^&*-+=|\{}[]:;"\'<>,.?/';
 
   // Zero-based count of characters in the allowable list.
-  $characters_length = Drupal\Component\Utility\Unicode::strlen($allowable_characters) -1;
+  $characters_length = Drupal\Component\Utility\Unicode::strlen($allowable_characters) - 1;
 
   $new_password = '';
   // Generate passwords until password requirements are met.
