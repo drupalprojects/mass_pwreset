@@ -5,3 +5,11 @@ mass_pwreset.admin:
     _title: 'Mass Password Reset'
   requirements:
     _permission: 'administer users'
+
+mass_pwreset_confirm_form:
+  path: '/admin/people/mass-pwreset/confirm'
+  defaults:
+    _form: '\Drupal\mass_pwreset\Form\MassPasswordResetConfirmForm'
+    _title: 'Mass Password Reset Confirm'
+  requirements:
+    _permission: 'administer users'
