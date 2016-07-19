@@ -5,7 +5,8 @@
  * Contains batch process functions for resetting passwords.
  */
 
-use \Drupal\user\Entity\User as User;
+use Drupal\user\Entity\User as User;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Batch process callback.
@@ -65,7 +66,7 @@ function mass_pwreset_batch_process($data, &$context) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
   }
   // Save roles in results for finished logging.
-  $context['results']['roles'] = $data['list_of_roles'];
+  $context['results']['roles'] = $data['roles'];
 }
 
 /**
@@ -85,9 +86,10 @@ function mass_pwreset_batch_finished($success, $results, $operations) {
     $log_message = t('Mass password reset finished. @count passwords reset with roles: @roles',
       array(
         '@count' => $passwords_reset,
-        '@roles' => $results['roles'],
+        '@roles' => implode(', ', $results['roles']),
       ));
     \Drupal::logger('mass_pwreset')->notice($log_message);
+    return new RedirectResponse('/admin/people/mass-pwreset');
   }
   else {
     // Log password reset batch failure.
