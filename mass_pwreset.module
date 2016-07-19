@@ -11,17 +11,17 @@ use Drupal\Core\Routing\RouteMatchInterface;
  * Establish batch operation for resetting passwords.
  */
 function mass_pwreset_multiple_reset($data) {
-  $batch = array(
-    'operations' => array(
-      array('mass_pwreset_batch_process', array($data)),
-    ),
+  $batch = [
+    'operations' => [
+      ['mass_pwreset_batch_process', [$data]],
+    ],
     'finished' => 'mass_pwreset_batch_finished',
     'title' => t('Multiple password reset'),
     'init_message' => t('Multiple password reset in progress.'),
     'progress_message' => t('Password reset batch in progress.'),
     'error_message' => t('There was an error in the password reset batch.'),
     'file' => drupal_get_path('module', 'mass_pwreset') . '/mass_pwreset.batch.inc',
-  );
+  ];
   // Set batch via form submit handler.
   batch_set($batch);
 }
@@ -33,7 +33,7 @@ function mass_pwreset_get_uids_by_selected_roles($roles = array()) {
   $db = \Drupal::database();
   $query = $db->select('users', 'u');
   $query->innerJoin('user__roles', 'ur', 'u.uid = ur.entity_id');
-  $query->fields('u', array('uid'));
+  $query->fields('u', ['uid']);
   $query->condition('ur.roles_target_id', $roles, 'IN');
   $query->condition('u.uid', '1', '!=');
   $query->orderBy('u.uid');
@@ -47,8 +47,8 @@ function mass_pwreset_get_uids_by_selected_roles($roles = array()) {
 function mass_pwreset_get_uids() {
   $db = \Drupal::database();
   $query = $db->select('users', 'u');
-  $query->fields('u', array('uid'));
-  $query->condition('u.uid', array(0, 1), 'NOT IN');
+  $query->fields('u', ['uid']);
+  $query->condition('u.uid', [0, 1], 'NOT IN');
   $query->orderBy('u.uid');
   $query->distinct();
   return $query->execute()->fetchCol();
@@ -90,7 +90,7 @@ function mass_pwreset_help($route_name, RouteMatchInterface $route_match) {
         '#suffix' => '</h3>',
       ];
       $render['usage_content'] = [
-        '#markup' => t('The password reset form is in a tab in the <b>admin people</b> section. Located at <a href="@link">/admin/people/mass-pwreset</a>', array('@link' => '/admin/people/mass-pwreset')),
+        '#markup' => t('The password reset form is in a tab in the <b>admin people</b> section. Located at <a href="@link">/admin/people/mass-pwreset</a>', ['@link' => '/admin/people/mass-pwreset']),
         '#prefix' => '<p>',
         '#suffix' => '</p>',
         'list' => [
