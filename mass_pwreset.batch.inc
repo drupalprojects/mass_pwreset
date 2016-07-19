@@ -31,13 +31,13 @@ function mass_pwreset_batch_process($data, &$context) {
     $user->save();
 
     // Update status message.
-    $context['message'] = t('Processing uid: @uid', array('@uid' => $user->id()));
+    $context['message'] = t('Processing uid: @uid', ['@uid' => $user->id()]);
     $context['results']['passwords_reset'][] = t('User password reset');
 
     // Send password reset email and log event.
     if ($data['notify_active_users'] == 1) {
       // Set batch message.
-      $email_message = t('Password reset email sent to uid: @uid', array('@uid' => $user->id()));
+      $email_message = t('Password reset email sent to uid: @uid', ['@uid' => $user->id()]);
       $context['message'] = $email_message;
 
       // Notify active users.
@@ -53,7 +53,7 @@ function mass_pwreset_batch_process($data, &$context) {
     }
 
     // Log password reset for this uid.
-    $message = t('Password reset for uid: @uid', array('@uid' => $user->id()));
+    $message = t('Password reset for uid: @uid', ['@uid' => $user->id()]);
     \Drupal::logger('mass_pwreset')->notice($message);
   }
 
@@ -79,15 +79,14 @@ function mass_pwreset_batch_finished($success, $results, $operations) {
     $passwords_reset = count($results['passwords_reset']);
 
     // Display message to user.
-    $message = t('Mass password reset batch finished resetting @count passwords.', array('@count' => $passwords_reset));
+    $message = t('Mass password reset batch finished resetting @count passwords.', ['@count' => $passwords_reset]);
     drupal_set_message($message);
 
     // Log password reset batch finished.
-    $log_message = t('Mass password reset finished. @count passwords reset with roles: @roles',
-      array(
+    $log_message = t('Mass password reset finished. @count passwords reset with roles: @roles', [
         '@count' => $passwords_reset,
         '@roles' => implode(', ', $results['roles']),
-      ));
+      ]);
     \Drupal::logger('mass_pwreset')->notice($log_message);
     return new RedirectResponse('/admin/people/mass-pwreset');
   }
