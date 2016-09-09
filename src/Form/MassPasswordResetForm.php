@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\mass_pwreset\Form\MassPasswordResetForm.
- */
-
 namespace Drupal\mass_pwreset\Form;
 
 use Drupal\Core\Form\FormBase;
