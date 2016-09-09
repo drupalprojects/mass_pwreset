@@ -124,10 +124,14 @@ class MassPasswordResetForm extends FormBase {
       $uids = mass_pwreset_get_uids_by_selected_roles($roles);
     }
 
+    // Verify uid query response.
     if (!isset($uids)) {
       drupal_set_message(t('There was an error getting user IDs to reset.'), 'error');
       return array();
     }
+
+    // Set uids used in form validation.
+    $form_state->set('uids', $uids);
 
     // Include the administrative user uid 1 if applicable.
     // Excluded if the current user is uid 1.
@@ -156,10 +160,17 @@ class MassPasswordResetForm extends FormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    // User must select roles for mass password reset.
+
     $selected_roles_count = count(array_filter($form_state->getValue('selected_roles')));
+
+    // User must select roles for mass password reset.
     if ($form_state->getValue('authenticated_role') == 0 && $selected_roles_count == 0) {
       $form_state->setErrorByName('authenticated_role', $this->t('Please select all users or select specific roles'));
+    }
+    // Verify there are uids in the selected roles.
+    if (count($form_state->getValue('uids')) == 0 && $selected_roles_count != 0) {
+      $form_state->setErrorByName('selected_roles', $this->t('There are no users with the selected role'));
+
     }
   }
 
