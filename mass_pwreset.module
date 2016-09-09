@@ -9,8 +9,11 @@ use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
  * Establish batch operation for resetting passwords.
+ *
+ * @param array $data
+ *   The array of data needed for this batch.
  */
-function mass_pwreset_multiple_reset($data) {
+function mass_pwreset_multiple_reset(array $data) {
   $batch = [
     'operations' => [
       ['mass_pwreset_batch_process', [$data]],
@@ -27,28 +30,43 @@ function mass_pwreset_multiple_reset($data) {
 }
 
 /**
- * Return uids from a list of roles, excluding uid 1.
+ * Return uids from a list of roles.
+ *
+ * Excludes current uid and uid 1.
+ *
+ * @param array $roles
+ *   An array of select roles.
  */
 function mass_pwreset_get_uids_by_selected_roles($roles = array()) {
+
+  // Do not include current logged in user.
+  $current_uid = \Drupal::currentUser()->id();
+
   $db = \Drupal::database();
   $query = $db->select('users', 'u');
   $query->innerJoin('user__roles', 'ur', 'u.uid = ur.entity_id');
   $query->fields('u', ['uid']);
   $query->condition('ur.roles_target_id', $roles, 'IN');
-  $query->condition('u.uid', '1', '!=');
+  $query->condition('u.uid', [1, $current_uid], 'NOT IN');
   $query->orderBy('u.uid');
   $query->distinct();
   return $query->execute()->fetchCol();
 }
 
 /**
- * Return uids for all user accounts, excluding uid 0 and 1.
+ * Return uids for all user accounts.
+ *
+ * Excludes uid 0, 1, and current uid.
  */
 function mass_pwreset_get_uids() {
+
+  // Do not include current logged in user.
+  $current_uid = \Drupal::currentUser()->id();
+
   $db = \Drupal::database();
   $query = $db->select('users', 'u');
   $query->fields('u', ['uid']);
-  $query->condition('u.uid', [0, 1], 'NOT IN');
+  $query->condition('u.uid', [0, 1, $current_uid], 'NOT IN');
   $query->orderBy('u.uid');
   $query->distinct();
   return $query->execute()->fetchCol();

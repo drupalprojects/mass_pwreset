@@ -93,6 +93,11 @@ class MassPasswordResetForm extends FormBase {
       '#title' => $this->t('Include admin user (uid1)'),
       '#default_value' => 0,
     ];
+    // Resetting your own password causes an error at the end of the batch.
+    $form['current_user_note'] = [
+      '#type' => 'item',
+      '#markup' => $this->t('The user submitting this form will not be included in the password reset batch.'),
+    ];
 
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['reset_passwords'] = [
@@ -109,12 +114,12 @@ class MassPasswordResetForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
 
     if ($form_state->getValue('authenticated_role') == 1) {
-      // Get all user IDs, excluding uid 1.
+      // Get all user IDs, excluding uid 1 and current uid.
       $uids = mass_pwreset_get_uids();
       $roles = ['authenticated role'];
     }
     else {
-      // Get user IDs from selected roles.
+      // Get user IDs from selected roles, excludes current uid.
       $roles = array_filter($form_state->getValue('selected_roles'));
       $uids = mass_pwreset_get_uids_by_selected_roles($roles);
     }
@@ -125,7 +130,9 @@ class MassPasswordResetForm extends FormBase {
     }
 
     // Include the administrative user uid 1 if applicable.
-    if ($form_state->getValue('include_admin_user') == 1) {
+    // Excluded if the current user is uid 1.
+    // Resetting your own password makes the batch fail.
+    if ($form_state->getValue('include_admin_user') == 1 && \Drupal::currentUser()->id() != 1) {
       array_push($uids, '1');
     }
 
