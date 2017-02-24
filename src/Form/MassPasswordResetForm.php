@@ -106,35 +106,57 @@ class MassPasswordResetForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    // Get the selected roles from the form.
+    $selected_roles = array_filter($form_state->getValue('selected_roles'));
 
+    // User must select roles for mass password reset.
+    if ($form_state->getValue('authenticated_role') == 0 && empty($selected_roles)) {
+      $form_state->setErrorByName('authenticated_role', $this->t('Please select all users or select specific roles.'));
+      return;
+    }
+
+    // Holds all the user ids to have the passwords reset.
+    $uids = [];
+    // If reset for all users is checked, get all the uids - excluding the
+    // current user id and user 1.
     if ($form_state->getValue('authenticated_role') == 1) {
-      // Get all user IDs, excluding uid 1 and current uid.
       $uids = mass_pwreset_get_uids();
       $roles = ['authenticated role'];
     }
+    // Otherwise, get the ids for the selected roles - excuding the current uid.
     else {
-      // Get user IDs from selected roles, excludes current uid.
-      $roles = array_filter($form_state->getValue('selected_roles'));
+      $roles = $selected_roles;
       $uids = mass_pwreset_get_uids_by_selected_roles($roles);
     }
 
-    // Verify uid query response.
-    if (!isset($uids)) {
-      drupal_set_message(t('There was an error getting user IDs to reset.'), 'error');
-      return array();
+    // If there are no users returned and there are roles selected, set error.
+    if (empty($uids) && $selected_roles) {
+      $form_state->setErrorByName('selected_roles', $this->t('There are no users with the selected role.'));
     }
 
-    // Set uids used in form validation.
+    // Set the 'uids' and 'roles' values for use in submitForm.
     $form_state->set('uids', $uids);
+    $form_state->set('roles', $roles);
+  }
 
-    // Include the administrative user uid 1 if applicable.
-    // Excluded if the current user is uid 1.
-    // Resetting your own password makes the batch fail.
-    if ($form_state->getValue('include_admin_user') == 1 && \Drupal::currentUser()->id() != 1) {
-      array_push($uids, '1');
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    // Get 'uids' and 'roles' values set in form validation.
+    $uids = $form_state->get('uids');
+    $roles = $form_state->get('roles');
+
+    // If the admin user is to be included in the reset and the current user is
+    // NOT the super admin user, add the uid of 1 to the $uids array.
+    // A check to see if the current user is 1 is required because resetting
+    // your own password will make the batch fail.
+    if ($form_state->getValue('include_admin_user') == 1 && $this->currentUser()->id() != 1) {
+      array_push($uids, 1);
     }
 
+    // Construct the batch data array that will be used in the batch process.
     $batch_data = [
       'uids' => $uids,
       'notify_active_users' => $form_state->getValue('notify_active_users'),
@@ -148,25 +170,6 @@ class MassPasswordResetForm extends FormBase {
 
     // Redirect to the confirm form.
     $form_state->setRedirect('mass_pwreset_confirm_form');
-
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-
-    $selected_roles_count = count(array_filter($form_state->getValue('selected_roles')));
-
-    // User must select roles for mass password reset.
-    if ($form_state->getValue('authenticated_role') == 0 && $selected_roles_count == 0) {
-      $form_state->setErrorByName('authenticated_role', $this->t('Please select all users or select specific roles'));
-    }
-    // Verify there are uids in the selected roles.
-    if (count($form_state->getValue('uids')) == 0 && $selected_roles_count != 0) {
-      $form_state->setErrorByName('selected_roles', $this->t('There are no users with the selected role'));
-
-    }
   }
 
 }

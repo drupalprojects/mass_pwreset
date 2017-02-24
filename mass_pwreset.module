@@ -5,6 +5,7 @@
  * Reset user passwords and optionally notify users.
  */
 
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
@@ -164,7 +165,7 @@ function _mass_pwreset_generate_password($password_length = 20) {
   $allowable_characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ0123456789()`~!@#$%^&*-+=|\{}[]:;"\'<>,.?/';
 
   // Zero-based count of characters in the allowable list.
-  $characters_length = Drupal\Component\Utility\Unicode::strlen($allowable_characters) - 1;
+  $characters_length = Unicode::strlen($allowable_characters) - 1;
 
   $new_password = '';
   // Generate passwords until password requirements are met.

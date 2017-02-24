@@ -84,9 +84,9 @@ function mass_pwreset_batch_finished($success, $results, $operations) {
 
     // Log password reset batch finished.
     $log_message = t('Mass password reset finished. @count passwords reset with roles: @roles', [
-        '@count' => $passwords_reset,
-        '@roles' => implode(', ', $results['roles']),
-      ]);
+      '@count' => $passwords_reset,
+      '@roles' => implode(', ', $results['roles']),
+    ]);
     \Drupal::logger('mass_pwreset')->notice($log_message);
     return new RedirectResponse('/admin/people/mass-pwreset');
   }
