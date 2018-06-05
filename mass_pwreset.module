@@ -138,12 +138,22 @@ function mass_pwreset_multiple_reset($data) {
  * Handler: retrieve uids from a list of roles
  */
 function mass_pwreset_get_uids_by_role($roles = array()) {
-	$query = db_select('users', 'u');
-	$query->innerJoin('users_roles', 'ur', 'u.uid = ur.uid');
-	$query->fields('u', array('uid', 'uid'));
- 	$query->condition('ur.rid', $roles, 'IN');
-	$query->orderBy('u.uid');
-	
+	$rid = DRUPAL_AUTHENTICATED_RID;
+	// If "authenticated user" role is present, select all users.
+	if (in_array($rid, $roles)) {
+		$query = db_select('users', 'u');
+		$query->fields('u', array('uid', 'uid'));
+		$query->condition('u.uid', '0', '<>');
+		$query->orderBy('u.uid');
+	}
+	else {
+		$query = db_select('users', 'u');
+		$query->innerJoin('users_roles', 'ur', 'u.uid = ur.uid');
+		$query->fields('u', array('uid', 'uid'));
+		$query->condition('ur.rid', $roles, 'IN');
+		$query->orderBy('u.uid');
+	}
+
 	$result = $query->execute()->fetchAllKeyed();
 	return $result;
 }
